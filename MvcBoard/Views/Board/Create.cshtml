@@ -1,0 +1,38 @@
+﻿@model MvcBoard.Models.Board
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Create</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <table class="tbl_basic">
+        <tr>
+            <th style="width: 10%;">이름</th>
+            <td>@Html.TextBoxFor(m => m.board_name)</td>
+        </tr>
+        <tr>
+            <th>제목</th>
+            <td colspan="3">@Html.TextBoxFor(m => m.board_subject)</td>
+        </tr>
+        <tr>
+            <th>내용</th>
+            <td colspan="3">@Html.TextAreaFor(m => m.board_content, new { rows = 10 })</td>
+        </tr>
+    </table>
+    <p>
+        <input type="submit" value="저장" />
+    </p>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index", new { @class = "btn-primary" } )
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

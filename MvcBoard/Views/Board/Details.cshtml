@@ -1,0 +1,31 @@
+﻿@model MvcBoard.Models.Board
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+<table class="tbl_list">
+    <tr>
+        <th style="width: 6%">@Model.board_postNo</th>
+        <th style="width: 57%" class="subject align_l">@Model.board_subject</th>
+        <th style="width: 15%">@Model.board_name</th>
+        <th style="width: 12%">@Model.board_writeTime.ToShortDateString()</th>
+        <th style="width: 10%">@Model.board_readCount</th>
+    </tr>
+    <tr>
+        <td colspan="5" class="cont_text">
+            <pre>@Model.board_content</pre>
+        </td>
+    </tr>
+</table>
+<p>
+    @using (Html.BeginForm("Delete", "Board", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.Hidden("id", Model.board_postNo)
+        <input type="submit" value="Delete" />
+    }
+    @Html.ActionLink("Edit", "Edit", new { id = Model.board_postNo })
+    @Html.ActionLink("Back to List", "Index")
+</p>

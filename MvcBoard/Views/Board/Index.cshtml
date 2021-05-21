@@ -1,0 +1,80 @@
+﻿@model PagedList.IPagedList<MvcBoard.Models.Board>
+@using PagedList.Mvc;
+
+@{
+    ViewBag.Title = "Board List";
+}
+
+<h1 style="text-align: center">MVCBOARD</h1>
+
+@{
+    string SchTxt = ViewBag.CurrentSchTxt;
+}
+
+<div class="table-responsive">
+    <table class="table table-bordered">
+        <tr>
+            <th class="text-center" style="width: 10%">번호</th>
+            <th class="text-center" style="width: 55%">제목</th>
+            <th class="text-center" style="width: 10%">글쓴이</th>
+            <th class="text-center" style="width: 15%">작성일</th>
+            <th class="text-center" style="width: 10%">조회수</th>
+
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.board_postNo</td>
+                <td style="text-align: left; padding-left: 15px;"><a href="/Board/Details/@item.board_postNo">@item.board_subject</a></td>
+                <td>@item.board_name</td>
+                <td>@item.board_writeTime.ToShortDateString()</td>
+                <td>@item.board_readCount</td>
+
+            </tr>
+        }
+    </table>
+
+    <script>
+        var OpenCreatePage = function () {
+            location.href = "/Board/Create";
+
+            return false;
+        }
+    </script>
+
+    <div class="row text-right" style="margin-left: 0px; margin-right:0px; margin-bottom:15px;">
+        <button type="button" class="text-center btn btn-sm btn-primary" onclick="OpenCreatePage();">New</button>
+
+    </div>
+
+</div>
+<div>
+    <div class="col-xs-12 text-center">
+        @Html.PagedListPager(Model, Page => Url.Action("Index", new { Page, CurrentSchTxt = SchTxt }))
+    </div>
+</div>
+
+
+<div class="form-group">
+
+    @using (Html.BeginForm("Index", "Board", FormMethod.Get))
+
+    {
+
+        <div class="col-xs-8 col-lg-4">
+
+                @Html.TextBox("SchTxt", null, new { @placeholder = "검색어를 입력해주세요", @value = SchTxt, @class = "form-control input-sm" })
+            
+        </div>
+
+        <div class="col-xs-4 col-lg-2">
+
+
+            <input type="submit" value="검색" class="btn btn-default input-sm" />
+
+        </div>
+
+    }
+
+</div> 
