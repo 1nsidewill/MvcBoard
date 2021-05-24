@@ -19,50 +19,60 @@ namespace MvcBoard.Controllers
         // GET: Board
         public ActionResult Index(string CurrentSchTxt, string SchTxt, int? page)
         {
-            List<Board> boardList = new List<Board>();
-            if (SchTxt != null)
+            try
             {
-                page = 1;
+                List<Board> boardList = new List<Board>();
+                if (SchTxt != null)
+                {
+                    page = 1;
+                }
+                else
+                {
+                    // 신규 검색어가 아닌 기존 검색어가 넘어올 경우 기존 검색어를 SchTxt에 넣어준다.
+                    // CurrentFilter 새 검색어가 입력되기 전까지 검색어는 이 녀석이 가지고 있다.
+                    // 그리고 가지고 있는 값을 매번 SchTxt에 넘겨준다.
+                    SchTxt = CurrentSchTxt;
+                }
+                if (SchTxt == null)
+                {
+                    SchTxt = "";
+                }
+                ViewBag.CurrentFilter = SchTxt;
+                using (IDbConnection db = new SqlConnection(Libs.Config.DBConnStrTest()))
+                {
+                    var boardData = db.Query<Board>("Select * From mvcboard " +
+                                                    "WHERE (@SchTxt = '' OR (@SchTxt <> '' AND board_subject = @SchTxt)) " +
+                                                    "ORDER BY board_postNo DESC", new { @SchTxt = SchTxt });
+                    //boardData = boardData.Contains
+                    boardList = boardData.ToList();
+
+                }
+
+                // 현재 페이지 정보가 없다면 1페이지로 간주하고 아니면 페이지 정보를 넘긴다.
+                int pageNo = page ?? 1;
+
+                // pageSize : 한 페이지에 불러올 컨텐츠의 수
+                int pageSize = 5;
+
+                return View(boardList.ToPagedList(pageNo, pageSize));
             }
-            else
+            catch(Exception ex)
             {
-                // 신규 검색어가 아닌 기존 검색어가 넘어올 경우 기존 검색어를 SchTxt에 넣어준다.
-                // CurrentFilter 새 검색어가 입력되기 전까지 검색어는 이 녀석이 가지고 있다.
-                // 그리고 가지고 있는 값을 매번 SchTxt에 넘겨준다.
-                SchTxt = CurrentSchTxt;
-            }
-            if (SchTxt == null)
-            {
-                SchTxt = "";
-            }
-            ViewBag.CurrentFilter = SchTxt;
-            using (IDbConnection db = new SqlConnection(Libs.Config.DBConnStrTest()))
-            {
-                var boardData = db.Query<Board>("Select * From mvcboard " +
-                                                "WHERE (@SchTxt = '' OR (@SchTxt <> '' AND board_subject = @SchTxt)) " +
-                                                "ORDER BY board_postNo DESC", new { @SchTxt = SchTxt });
-                //boardData = boardData.Contains
-                boardList = boardData.ToList();
-
+                return RedirectToAction("Error");
             }
 
-            // 현재 페이지 정보가 없다면 1페이지로 간주하고 아니면 페이지 정보를 넘긴다.
-            int pageNo = page ?? 1;
-
-            // pageSize : 한 페이지에 불러올 컨텐츠의 수
-            int pageSize = 5;
-
-            return View(boardList.ToPagedList(pageNo, pageSize));
         }
 
 
         // GET: Board/Details/5
         public ActionResult Details(int? id)
         {
-            Board _board = new Board();
-            using (IDbConnection db = new SqlConnection(Libs.Config.DBConnStrTest()))
+            try
             {
-                string test = @"
+                Board _board = new Board();
+                using (IDbConnection db = new SqlConnection(Libs.Config.DBConnStrTest()))
+                {
+                    string test = @"
                     DECLARE @board_count INT 
                     SELECT @board_count = (board_readCount + 1) FROM mvcboard WHERE board_postNo = @id
 
@@ -78,12 +88,18 @@ namespace MvcBoard.Controllers
 
                 ";
 
-                _board = db.Query<Board>(test, new {@id = id }).SingleOrDefault();
+                    _board = db.Query<Board>(test, new { @id = id }).SingleOrDefault();
 
 
+                }
+
+                return View(_board);
             }
-
-            return View(_board);
+            catch
+            {
+                return RedirectToAction("Error");
+            }
+            
         }
 
         // GET: Board/Create
@@ -97,41 +113,64 @@ namespace MvcBoard.Controllers
         [HttpPost]
         public ActionResult Create(Board _board)
         {
-
-            using (IDbConnection db = new SqlConnection(Libs.Config.DBConnStrTest()))
+            try
             {
-                string sqlQuery = "Insert Into mvcboard (board_name, board_subject, board_content, board_writeTime) Values(@board_name, @board_subject, @board_content, GETDATE())";
-                var rowsAffected = db.Execute(sqlQuery, new {board_name = _board.board_name, board_subject=_board.board_subject, board_content = _board.board_content});
-            }
+                using (IDbConnection db = new SqlConnection(Libs.Config.DBConnStrTest()))
+                {
+                    string sqlQuery = "Insert Into mvcboard (board_name, board_subject, board_content, board_writeTime) Values(@board_name, @board_subject, @board_content, GETDATE())";
+                    var rowsAffected = db.Execute(sqlQuery, new { board_name = _board.board_name, board_subject = _board.board_subject, board_content = _board.board_content });
+                }
 
-            return RedirectToAction("Index");
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                return RedirectToAction("Error");
+            }
+           
         }
 
         // GET: Board/Edit/5  
         public ActionResult Edit(int id)
         {
-            Board _board = new Board();
-            using (IDbConnection db = new SqlConnection(Libs.Config.DBConnStrTest()))
+            try
             {
-                _board = db.Query<Board>("Select * From mvcboard " +
-                                       "WHERE board_postNo =" + id, new { id }).SingleOrDefault();
+                Board _board = new Board();
+                using (IDbConnection db = new SqlConnection(Libs.Config.DBConnStrTest()))
+                {
+                    _board = db.Query<Board>("Select * From mvcboard " +
+                                           "WHERE board_postNo =" + id, new { id }).SingleOrDefault();
+                }
+                return View(_board);
             }
-            return View(_board);
+            catch
+            {
+                return RedirectToAction("Error");
+            }
+
         }
 
         // POST: Board/Edit/5  
         [HttpPost]
         public ActionResult Edit(Board _board)
         {
-            using (IDbConnection db = new SqlConnection(Libs.Config.DBConnStrTest()))
+            try
             {
+                using (IDbConnection db = new SqlConnection(Libs.Config.DBConnStrTest()))
+                {
 
-                string sqlQuery = "update mvcboard set board_name='" + _board.board_name + "',board_subject='" + _board.board_subject + "',board_content='" + _board.board_content + "' where board_postNo=" + _board.board_postNo;
+                    string sqlQuery = "update mvcboard set board_name='" + _board.board_name + "',board_subject='" + _board.board_subject + "',board_content='" + _board.board_content + "' where board_postNo=" + _board.board_postNo;
 
-                int rowsAffected = db.Execute(sqlQuery);
+                    int rowsAffected = db.Execute(sqlQuery);
+                }
+
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                return RedirectToAction("Error");
             }
 
-            return RedirectToAction("Index");
         }
 
         // GET: Board/Delete/5  
@@ -159,6 +198,10 @@ namespace MvcBoard.Controllers
 
             }
             return RedirectToAction("Index");
+        }
+        public ActionResult Error()
+        {
+            return View();
         }
     }
 }

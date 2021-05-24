@@ -263,7 +263,6 @@
     <Content Include="Views\Board\Details.cshtml" />
     <Content Include="Views\Board\Edit.cshtml" />
     <Content Include="Views\Board\Index.cshtml" />
-    <Content Include="Views\Board\Details2.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

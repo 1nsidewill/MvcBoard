@@ -4,7 +4,7 @@
     ViewBag.Title = "Edit";
 }
 
-<h2>Edit</h2>
+<h2>수정</h2>
 
 
 @using (Html.BeginForm())
@@ -25,17 +25,17 @@
         </tr>
         <tr>
             <th>내용</th>
-            <td colspan="3">@Html.TextAreaFor(m => m.board_content, new { rows = 10 })</td>
+            <td>@Html.TextAreaFor(m => m.board_content, 20, 30, htmlAttributes: new { style = "width: 100%; max-width: 70%;" })</td>
         </tr>
     </table>
     <p>
-        <input type="submit" value="저장" />
-    </p>
-}
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
 
+    </p>
+    <div class="text-center">
+        <button type="submit" class="btn btn-primary" onclick="return confirm('변경 사항을 저장하시겠습니까?')">저장</button>
+        @Html.ActionLink("취소", "Index", null, new { @class = "btn btn-success" })
+    </div>
+}
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }

@@ -19,9 +19,6 @@
                 </button>
                 @Html.ActionLink("게시판", "Index", "Board", new { area = "" }, new { @class = "navbar-brand" })
             </div>
-            <div class="navbar-collapse collapse">
-                @Html.Partial("_LoginPartial")
-            </div>
         </div>
     </div>
     <div class="container body-content">
@@ -34,5 +31,6 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+<script src="~/Scripts/trumbowyg/trumbowyg.min.js"></script>
 </body>
 </html>

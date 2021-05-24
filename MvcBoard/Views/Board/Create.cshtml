@@ -4,35 +4,42 @@
     ViewBag.Title = "Create";
 }
 
-<h2>Create</h2>
+<h1>글 작성</h1>
 
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
+
+
     <table class="tbl_basic">
         <tr>
             <th style="width: 10%;">이름</th>
-            <td>@Html.TextBoxFor(m => m.board_name)</td>
+            <td>@Html.TextBoxFor(m => m.board_name, new { placeholder = "이름을 입력하세요" })</td>
         </tr>
         <tr>
             <th>제목</th>
-            <td colspan="3">@Html.TextBoxFor(m => m.board_subject)</td>
+            <td colspan="3">@Html.TextBoxFor(m => m.board_subject, new { placeholder = "제목을 입력하세요" })</td>
         </tr>
         <tr>
             <th>내용</th>
-            <td colspan="3">@Html.TextAreaFor(m => m.board_content, new { rows = 10 })</td>
+            <td>@Html.TextAreaFor(m => m.board_content, 20, 30, htmlAttributes: new { style = "width: 100%; max-width: 70%;" , placeholder = "write something.." })</td>
         </tr>
     </table>
     <p>
-        <input type="submit" value="저장" />
+
     </p>
+
+    <div class="text-center">
+        @Html.ValidationMessageFor(m => m.board_name)
+        @Html.ValidationMessageFor(m => m.board_subject)
+        @Html.ValidationMessageFor(m => m.board_content)
+    </div>
+    <div class="text-center">
+        <button type="submit" class="btn btn-primary" onclick="return confirm('게시글을 작성하시겠습니까?')">작성</button>
+        @Html.ActionLink("취소", "Index", null, new { @class = "btn btn-success" })
+    </div>
 }
-
-<div>
-    @Html.ActionLink("Back to List", "Index", new { @class = "btn-primary" } )
-</div>
-
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }
