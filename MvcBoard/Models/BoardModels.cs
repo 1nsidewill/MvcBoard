@@ -9,7 +9,7 @@ namespace MvcBoard.Models
 {
     public class Board
     {
-        [Required]
+        [Key]
         public int board_postNo { get; set; }
         [Required(ErrorMessage ="제목을 입력하세요")]
         public string board_subject { get; set; }

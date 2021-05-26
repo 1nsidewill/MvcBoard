@@ -1,18 +1,4 @@
 ﻿
-.form-group input {
-    display: inline-block
-}
-
-;
-
-.temp123 {
-    text-align: center;
-}
-
-    .temp123 > input {
-        text-align: left;
-    }
-
 .tbl_basic {
     border: 1px solid #e8e9ea;
     border-collapse: collapse;
@@ -20,6 +6,8 @@
     background-color: #fff;
     width: 100%;
     font-size: 0.8em;
+    margin-left: auto;
+    margin-right: auto;
 }
 
     .tbl_basic th {
@@ -60,7 +48,7 @@
 }
 
     .tbl_list th {
-        background: #113971;
+        background: #1dcf87;
         color: #fff;
         font-weight: bold;
         text-align: center;
@@ -76,7 +64,7 @@
         padding: 7px 0 8px;
         line-height: 1.5em;
         border: 1px solid #e8e9ea;
-        font-size: 1.1em;
+        font-size: 3.0em;
     }
 
     .tbl_list .align_l {
