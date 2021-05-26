@@ -52,13 +52,13 @@ namespace MvcBoard.Controllers
                 int pageNo = page ?? 1;
 
                 // pageSize : 한 페이지에 불러올 컨텐츠의 수
-                int pageSize = 5;
+                int pageSize = 10;
 
                 return View(boardList.ToPagedList(pageNo, pageSize));
             }
-            catch(Exception ex)
+            catch(Exception exception)
             {
-                return RedirectToAction("Error");
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, exception.Message); ;
             }
 
         }
@@ -111,6 +111,7 @@ namespace MvcBoard.Controllers
 
         // POST: Board/Create
         [HttpPost]
+        [ValidateInput(false)]
         public ActionResult Create(Board _board)
         {
             try
