@@ -1,41 +1,29 @@
-﻿@model MvcBoard.Models.RegisterViewModel
-@{
-    ViewBag.Title = "Register";
-}
+﻿@model MvcBoard.Models.User
 
-<h2>@ViewBag.Title.</h2>
+<h2>회원가입</h2>
 
-@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-{
-    @Html.AntiForgeryToken()
-    <h4>Create a new account.</h4>
-    <hr />
-    @Html.ValidationSummary("", new { @class = "text-danger" })
+<form class="form-horizontal" method="post" asp-controller="Account" asp-action="Register">
     <div class="form-group">
-        @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
-        </div>
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
-        </div>
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" class="btn btn-default" value="Register" />
-        </div>
-    </div>
-}
+        <label>ID</label>
+        <input type="text" class="form-control" name="UserId" asp-for="UserId" placeholder="사용자 ID 입력" />
+        <span class="text-danger">@Html.ValidationMessageFor(m => m.UserId)</span>
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
+    </div>
+
+    <div class="form-group">
+        <label>PW</label>
+        <input type="password" class="form-control" name="UserPassword" asp-for="UserPassword" placeholder="사용자 비밀번호 입력" />
+        <span class="text-danger">@Html.ValidationMessageFor(m => m.UserPassword)</span>
+    </div>
+
+    <div class="form-group">
+        <label>Name</label>
+        <input type="text" class="form-control" name="UserName" asp-for="UserName" placeholder="사용자 이름 입력" />
+        <span class="text-danger">@Html.ValidationMessageFor(m => m.UserName)</span>
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">가입</button>
+        <a class="btn btn-warning" href="#">취소</a>
+    </div>
+</form>
