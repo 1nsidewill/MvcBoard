@@ -1,15 +1,18 @@
-﻿@model PagedList.IPagedList<MvcBoard.Models.Board>
-@using PagedList.Mvc;
+﻿@model IEnumerable<MvcBoard.Models.Board>
+@using AddLib
+
 
 @{
-    ViewBag.Title = "Board List";
+    ViewBag.Title = "Index";
+    int pageNum = ViewBag.Page ?? 1;
+    int totalCount = ViewBag.TotalCount ?? 0;
+    int maxListCount = ViewBag.MaxListCount ?? 1;
+    int totalPageCount = Convert.ToInt32(Math.Ceiling((double)totalCount / maxListCount));
+    var commonLib = new CommonLibrary();
+
 }
 
 <h1 style="text-align: center">BOARD</h1>
-
-@{
-    string SchTxt = ViewBag.CurrentSchTxt;
-}
 
 <table class="table table-striped">
     <thead>
@@ -51,24 +54,43 @@
 
 </div>
 
-@using (Html.BeginForm("Index", "Board", FormMethod.Get))
+<form stlye="width:500px">
+    @{ 
+        string[] exceptKeys = new string[] { "searchKind", "keyword", "page" };
+    }
 
-{
-    <div class="row">
-        <div class="col-lg-4 col-lg-offset-4">
-            <div class="input-group">
-                @Html.TextBox("SchTxt", null, new { @placeholder = "검색어를 입력해주세요", @value = SchTxt, @class = "form-control input-sm" })
-                <span class="input-group-btn">
-                    <input type="submit" value="검색" class="btn btn-default input-sm" />
-                </span>
-            </div><!-- /input-group -->
-        </div><!-- /.col-lg-4 -->
-    </div><!-- /.row -->
-}
+    @foreach (var item in commonLib.UrlParameters)
+    {
+        if (!exceptKeys.Contains(item.Key))
+        {
+            <input type="hidden" name="@item.Key" value="@item.Value" />
+        }
+    }
 
-<div>
-    <div class="col-xs-12 text-center">
-        @Html.PagedListPager(Model, Page => Url.Action("Index", new { Page, CurrentSchTxt = SchTxt }))
+    <div class="input-group" style="width:450px;margin:auto">
+        <span class="input-group-addon">
+            <select name="searchKind">
+                <option value="subject" @(ViewBag.SearchKind == "Title" ? "selected" : "")>제목</option>
+                <option value="content" @(ViewBag.SearchKind == "content" ? "selected" : "")>내용</option>
+                <option value="name" @(ViewBag.SearchKind == "name" ? "selected" : "")>글쓴이</option>
+            </select>
+        </span>
+        <input class="form-control" type="text" name="keyword" value="@ViewBag.Keyword" />
+        <span class="input-group-btn">
+            <button class="btn btn-info" type="submit">검색</button>
+            @Html.ActionLink("홈", "Index", null, new { @class = "btn btn-success"})
+        </span>
     </div>
-</div>
+</form>
+
+<p></p>
+<div class="text-center">
+    <div class="btn-group">
+        @for (int i = 1; i <= totalPageCount; i++)
+            {
+            <a class="btn btn-@(pageNum == i ? "primary" : "default")" href="@commonLib.AddUrlParameter("page", i.ToString())">@i</a>
+            }
+            
+        </div>
+    </div>
 

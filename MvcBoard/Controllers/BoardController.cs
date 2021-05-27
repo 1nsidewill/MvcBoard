@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MvcBoard.Models;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -9,59 +10,71 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Dapper;
-using MvcBoard.Models;
-using PagedList;
 
 namespace MvcBoard.Controllers
 {
     public class BoardController : Controller
     {
         // GET: Board
-        public ActionResult Index(string CurrentSchTxt, string SchTxt, int? page)
+        public ActionResult Index()
         {
-            try
+            List<Board> boardList = new List<Board>();
+            using (IDbConnection db = new SqlConnection(Libs.Config.DBConnStrTest()))
             {
-                List<Board> boardList = new List<Board>();
-                if (SchTxt != null)
+                var boardData = db.Query<Board>("Select * From mvcboard " +
+                                                "ORDER BY board_postNo DESC");
+
+                
+                int maxListCount = 10;
+                int pageNum = 1;
+                string keyword = Request.QueryString["keyword"] ?? string.Empty;
+                string searchKind = Request.QueryString["searchKind"] ?? string.Empty; int totalCount = 0;
+
+                if (Request.QueryString["page"] != null)
+                    pageNum = Convert.ToInt32(Request.QueryString["page"]);
+
+                var boards = new List<Board>();
+
+
+                if(string.IsNullOrEmpty(keyword))
                 {
-                    page = 1;
+                    boards = boardData.ToList();
+                    totalCount = boards.Count();
                 }
                 else
                 {
-                    // 신규 검색어가 아닌 기존 검색어가 넘어올 경우 기존 검색어를 SchTxt에 넣어준다.
-                    // CurrentFilter 새 검색어가 입력되기 전까지 검색어는 이 녀석이 가지고 있다.
-                    // 그리고 가지고 있는 값을 매번 SchTxt에 넘겨준다.
-                    SchTxt = CurrentSchTxt;
+                    switch(searchKind)
+                    {
+                        case "subject":
+                            boards = boardData.Where(x => x.board_subject.Contains(keyword)).ToList();
+                            totalCount = boards.Count();
+                            break;
+                        case "content":
+                            boards = boardData.Where(x => x.board_content.Contains(keyword)).ToList();
+                            totalCount = boards.Count();
+                            break;
+                        case "name":
+                            boards = boardData.Where(x => x.board_name.Contains(keyword)).ToList();
+                            totalCount = boards.Count();
+                            break;
+
+                    }           
                 }
-                if (SchTxt == null)
-                {
-                    SchTxt = "";
-                }
-                ViewBag.CurrentFilter = SchTxt;
-                using (IDbConnection db = new SqlConnection(Libs.Config.DBConnStrTest()))
-                {
-                    var boardData = db.Query<Board>("Select * From mvcboard " +
-                                                    "WHERE (@SchTxt = '' OR (@SchTxt <> '' AND board_subject = @SchTxt)) " +
-                                                    "ORDER BY board_postNo DESC", new { @SchTxt = SchTxt });
-                    //boardData = boardData.Contains
-                    boardList = boardData.ToList();
+                boards = boards.Skip((pageNum - 1) * maxListCount)
+                               .Take(maxListCount).ToList();
 
-                }
+                ViewBag.Page = pageNum;
+                ViewBag.TotalCount = boardData.Count();
+                ViewBag.MaxListCount = maxListCount;
+                ViewBag.SearchKind = searchKind;
+                ViewBag.Keyword = keyword;
 
-                // 현재 페이지 정보가 없다면 1페이지로 간주하고 아니면 페이지 정보를 넘긴다.
-                int pageNo = page ?? 1;
-
-                // pageSize : 한 페이지에 불러올 컨텐츠의 수
-                int pageSize = 10;
-
-                return View(boardList.ToPagedList(pageNo, pageSize));
+                return View(boards);
             }
-            catch(Exception exception)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, exception.Message); ;
-            }
-
         }
+
+
+
 
 
         // GET: Board/Details/5
@@ -99,7 +112,7 @@ namespace MvcBoard.Controllers
             {
                 return RedirectToAction("Error");
             }
-            
+
         }
 
         // GET: Board/Create
@@ -128,7 +141,7 @@ namespace MvcBoard.Controllers
             {
                 return RedirectToAction("Error");
             }
-           
+
         }
 
         // GET: Board/Edit/5  

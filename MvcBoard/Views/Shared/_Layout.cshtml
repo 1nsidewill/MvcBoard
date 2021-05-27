@@ -21,6 +21,12 @@
                 </button>
                 @Html.ActionLink("게시판", "Index", "Board", new { area = "" }, new { @class = "navbar-brand" })
             </div>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>@Html.ActionLink("회원가입", "Register", "Account", new { area = "" }, new { @class = "navbar-brand" })</li>
+                <li>@Html.ActionLink("로그인", "Login", "Account", new { area = "" }, new { @class = "navbar-brand" })</li>
+            </ul>
+
         </div>
     </div>
     <div class="container body-content">

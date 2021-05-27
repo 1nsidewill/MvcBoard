@@ -37,10 +37,9 @@
     </tr>
 </table>
 
-
 <div class="text-center">
-    @Html.ActionLink("수정", "Edit", new { id = Model.board_postNo }, new { @class = "btn btn-primary" , @onclick= "return confirm('수정 하시겠습니까?')" })
-    @Html.ActionLink("목록", "Index", null, new { @class = "btn btn-success" })
+    @Html.ActionLink("수정", "Edit", new { id = Model.board_postNo }, new { @class = "btn btn-primary", @onclick = "return confirm('수정 하시겠습니까?')" })
+    <button class="btn btn-success" onclick="history.go(-1);">목록</button>
 </div>
 
 
