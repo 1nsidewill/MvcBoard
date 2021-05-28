@@ -40,7 +40,7 @@ namespace MvcBoard.Controllers
                     if (user!=null)
                     {
                         // 로그인 성공시
-                        return RedirectToAction("LoginSucess", "Home");
+                        return RedirectToAction("LoginSuccess", "Home");
                     }
                     // 로그인 실패시
                     ModelState.AddModelError(string.Empty, "사용자 ID 혹은 비밀번호가 옳바르지 않습니다");
